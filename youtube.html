@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Search</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .light-mode {
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .dark-mode input[type="text"] {
+            background-color: #333;
+            color: #e0e0e0;
+            border: 1px solid #444;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .search-button {
+            color: #fff;
+            background-color: #ff0000;
+        }
+
+        .search-button:hover {
+            background-color: #e60000;
+        }
+
+        .theme-toggle-button {
+            color: #333;
+            background-color: #ddd;
+        }
+
+        .dark-mode .theme-toggle-button {
+            color: #e0e0e0;
+            background-color: #444;
+        }
+
+        .results {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .video {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            width: 300px;
+            text-align: left;
+            overflow: hidden;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .dark-mode .video {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .video img {
+            width: 100%;
+            height: auto;
+        }
+
+        .video h3 {
+            font-size: 18px;
+            margin: 10px;
+        }
+
+        .video a {
+            text-decoration: none;
+        }
+
+        .dark-mode .video a {
+            color: #ff0000;
+        }
+
+        .video a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body class="light-mode">
+    <h1>YouTube Search</h1>
+    <div class="search-container">
+        <input type="text" id="query" placeholder="Enter your search term">
+        <button class="search-button" onclick="searchYouTube()">Search</button>
+        <button class="theme-toggle-button" onclick="toggleTheme()">Toggle Theme</button>
+    </div>
+    <div class="results" id="results"></div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            body.classList.toggle('light-mode');
+        }
+
+        async function searchYouTube() {
+            const query = document.getElementById('query').value;
+            const apiKey = ''; //here you should put KEY
+            const maxResults = 10;
+            const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${query}&key=${apiKey}`);
+            const data = await response.json();
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            data.items.forEach(item => {
+                const videoDiv = document.createElement('div');
+                videoDiv.classList.add('video');
+                videoDiv.innerHTML = `
+                    <h3>${item.snippet.title}</h3>
+                    <a href="https://www.youtube.com/watch?v=${item.id.videoId}" target="_blank">
+                        <img src="${item.snippet.thumbnails.medium.url}" alt="${item.snippet.title}">
+                    </a>
+                `;
+                resultsDiv.appendChild(videoDiv);
+            });
+        }
+    </script>
+</body>
+
+</html>
